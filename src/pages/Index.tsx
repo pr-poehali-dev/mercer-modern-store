@@ -1,17 +1,60 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
+import Cart from '@/components/Cart';
+import HomePage from './HomePage';
+import CatalogPage from './CatalogPage';
+import FAQPage from './FAQPage';
+import ContactsPage from './ContactsPage';
+import CheckoutPage from './CheckoutPage';
+import AdminPage from './AdminPage';
 
-const Index = () => {
+type Page = 'home' | 'catalog' | 'faq' | 'contacts' | 'checkout' | 'admin';
+
+const PAGES: Page[] = ['home', 'catalog', 'faq', 'contacts', 'checkout', 'admin'];
+
+export default function Index() {
+  const [page, setPage] = useState<Page>(() => {
+    const hash = window.location.hash.replace('#', '') as Page;
+    return PAGES.includes(hash) ? hash : 'home';
+  });
+  const [cartOpen, setCartOpen] = useState(false);
+
+  const navigate = (p: string) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setPage(p as Page);
+    window.location.hash = p;
+  };
+
+  useEffect(() => {
+    const handler = () => {
+      const hash = window.location.hash.replace('#', '') as Page;
+      if (PAGES.includes(hash)) setPage(hash);
+    };
+    window.addEventListener('hashchange', handler);
+    return () => window.removeEventListener('hashchange', handler);
+  }, []);
+
+  if (page === 'admin') {
+    return <AdminPage />;
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
+    <div className="relative">
+      <Navbar currentPage={page} onNavigate={navigate} onCartOpen={() => setCartOpen(true)} />
+
+      <div key={page} className="page-enter">
+        {page === 'home' && <HomePage onNavigate={navigate} />}
+        {page === 'catalog' && <CatalogPage onCartOpen={() => setCartOpen(true)} />}
+        {page === 'faq' && <FAQPage />}
+        {page === 'contacts' && <ContactsPage />}
+        {page === 'checkout' && <CheckoutPage onNavigate={navigate} />}
       </div>
-      <span className="absolute bottom-8 left-1/2 -translate-x-1/2 inline-block bg-[#FF6637] text-white text-sm px-4 py-2 rounded-full whitespace-nowrap">
-        Подождите 5 минут, Юра создает первую версию проекта с нуля
-      </span>
+
+      <Cart
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        onCheckout={() => navigate('checkout')}
+      />
     </div>
   );
-};
-
-export default Index;
+}

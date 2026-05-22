@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Send order",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "name": "Тест Тестов",
+        "email": "test@test.com",
+        "phone": "+79991234567",
+        "city": "Москва",
+        "address": "ул. Тестовая, 1",
+        "comment": "",
+        "items": [{"productId": 1, "name": "Пальто", "price": 28900, "size": "M", "color": "black", "quantity": 1}],
+        "total": 28900
+      },
+      "expectedStatus": 200,
+      "expectedBody": {"ok": true},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

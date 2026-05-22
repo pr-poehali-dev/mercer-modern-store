@@ -22,7 +22,7 @@ export default function CheckoutPage({ onNavigate }: CheckoutPageProps) {
     setError('');
 
     try {
-      const res = await fetch((window as Record<string, unknown>)['func2url']?.['send-order'] as string || '/api/send-order', {
+      const res = await fetch('https://functions.poehali.dev/fbcc9ed5-56bc-4a0c-8f7a-e9b272ea5490', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, items, total }),
